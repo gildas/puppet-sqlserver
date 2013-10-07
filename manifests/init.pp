@@ -35,7 +35,9 @@
 #
 # Copyright 2013 Your name here, unless otherwise noted.
 #
-class sqlserver
+class sqlserver(
+  $sa_password
+)
 {
   if ($operatingsystem != 'Windows')
   {
@@ -55,7 +57,6 @@ class sqlserver
                 ]
   }
 
-  $sa_password='D0gf00d'
 
   exec {'sqlserver-install':
     command  => "${core::cache_dir}/${sql_install} /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL,AS,RS,IS,Tools /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /TCPENABLED=1",
