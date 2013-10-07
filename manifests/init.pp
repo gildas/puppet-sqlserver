@@ -60,7 +60,7 @@ class sqlserver
   exec {'sqlserver-install':
     # First test, we can use /QS
     command  => "${core::cache_dir}/${sql_install} /QS /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL,AS,RS,IS,Tools /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /TCPENABLED=1",
-    #creates => "${core::cache_dir}/${sql_install}",
+    creates  => "C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
     cwd      => "${core::cache_dir}",
     provider => windows,
     timeout  => 900,
@@ -69,4 +69,6 @@ class sqlserver
                   Exec['sqlserver-install-download'],
                 ]
   }
+
+  #TODO: Open the firewall for the TCP connection to SQL Server
 }
