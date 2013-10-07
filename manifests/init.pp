@@ -35,7 +35,34 @@
 #
 # Copyright 2013 Your name here, unless otherwise noted.
 #
-class sqlserver {
+class sqlserver
+{
+  if ($operatingsystem != 'Windows')
+  {
+    err("This module works on Windows only!")
+    fail("Unsupported OS")
+  }
 
+  $sql_repo    = 'http://download.microsoft.com/download/8/D/D/8DD7BDBA-CEF7-4D8E-8C16-D9F69527F909/ENU/x64/'
+  $sql_install = 'SQLEXPR_x64_ENU.exe'
 
+  exec {'sqlserver-install-download':
+    command  => "((new-object net.webclient).DownloadFile('${sql_repo}/${sql_install}','${core::cache_dir}/${sql_install}'))",
+    creates  => "${core::cache_dir}/${sql_install}",
+    provider => powershell,
+    require  => [
+                  File["${core::cache_dir}"],
+                ]
+  }
+
+  exec {'sqlserver-install-extract':
+    command  => "${core::cache_dir}/${sql_install}",
+    #creates => "${core::cache_dir}/${sql_install}",
+    cwd      => "${core::cache_dir}",
+    provider => windows,
+    require  => [
+                  File["${core::cache_dir}"],
+                  Exec['sqlserver-install-download'],
+                ]
+  }
 }
