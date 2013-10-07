@@ -59,7 +59,7 @@ class sqlserver
 
   exec {'sqlserver-install':
     # First test, we can use /QS
-    command  => "${core::cache_dir}/${sql_install} /QS /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL,AS,RS,IS,Tools /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password} /TCPENABLED=1",
+    command  => "${core::cache_dir}/${sql_install} /QS /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL,AS,RS,IS,Tools /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /TCPENABLED=1",
     #creates => "${core::cache_dir}/${sql_install}",
     cwd      => "${core::cache_dir}",
     provider => windows,
