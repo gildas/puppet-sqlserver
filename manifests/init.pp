@@ -63,6 +63,7 @@ class sqlserver
     #creates => "${core::cache_dir}/${sql_install}",
     cwd      => "${core::cache_dir}",
     provider => windows,
+    timeout  => 900,
     require  => [
                   File["${core::cache_dir}"],
                   Exec['sqlserver-install-download'],
