@@ -58,7 +58,7 @@ class sqlserver(
   }
 
 
-  exec {'sqlserver-install':
+  exec {'sqlserver-install-run':
     command  => "${core::cache_dir}/${sql_install} /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL,AS,RS,IS,Tools /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /TCPENABLED=1",
     creates  => "C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
     cwd      => "${core::cache_dir}",
