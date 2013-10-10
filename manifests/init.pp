@@ -45,11 +45,11 @@ class sqlserver(
     fail("Unsupported OS")
   }
 
-  $sql_repo    = 'http://download.microsoft.com/download/8/D/D/8DD7BDBA-CEF7-4D8E-8C16-D9F69527F909/ENU/x64/'
-  $sql_install = 'SQLEXPR_x64_ENU.exe'
+  $sql_source  = 'http://download.microsoft.com/download/8/D/D/8DD7BDBA-CEF7-4D8E-8C16-D9F69527F909/ENU/x64/SQLEXPR_x64_ENU.exe'
+  $sql_install = url_parse($sql_source, 'filename')
 
   exec {'sqlserver-install-download':
-    command  => "((new-object net.webclient).DownloadFile('${sql_repo}/${sql_install}','${core::cache_dir}/${sql_install}'))",
+    command  => "((new-object net.webclient).DownloadFile('${sql_source}','${core::cache_dir}/${sql_install}'))",
     creates  => "${core::cache_dir}/${sql_install}",
     provider => powershell,
     require  => [
