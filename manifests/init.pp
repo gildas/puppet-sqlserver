@@ -36,6 +36,7 @@
 # Copyright 2013 Your name here, unless otherwise noted.
 #
 class sqlserver(
+  $edition,
   $sa_password
 )
 {
@@ -44,6 +45,7 @@ class sqlserver(
     err("This module works on Windows only!")
     fail("Unsupported OS")
   }
+  validate_re($edition, ['^(?i)(express|standard|enterprise)$'])
 
   $sql_source  = 'http://download.microsoft.com/download/8/D/D/8DD7BDBA-CEF7-4D8E-8C16-D9F69527F909/ENU/x64/SQLEXPR_x64_ENU.exe'
   $sql_install = url_parse($sql_source, 'filename')
