@@ -86,18 +86,6 @@ class sqlserver(
         }
         'standard':
         {
-          $sql_source  = 'ftp://tyofiles/AppShare/Microsoft/MSDN/SQLServer/2012/en_sql_server_2012_standard_edition_with_sp1_x64_dvd_1228198.iso'
-          $sql_install = url_parse($sql_source, 'filename')
-
-          exec {"sqlserver-install-download":
-            command  => "((new-object net.webclient).DownloadFile('${sql_source}','${core::cache_dir}/${sql_install}'))",
-            creates  => "${core::cache_dir}/${sql_install}",
-            provider => powershell,
-            require  => [
-                          File["${core::cache_dir}"],
-                        ]
-          }
-
         }
         'enterprise':
         {
