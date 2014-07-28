@@ -86,6 +86,16 @@ class sqlserver(
         }
         'standard':
         {
+          $credentials  = pscredential('AddToDomainAPAC', 'Interactive!')
+          $creds_option = "-Credential ${credentials}"
+          $isopath      = '\\tyofiles\AppShare\Microsoft\MSDN\SQLServer\2012\en_sql_server_2012_standard_edition_with_sp1_x64_dvd_1228198.iso'
+          exec {'sqlserver-install':
+            command  => "New-PSDrive -Name Z -Root \\\\tyofiles\\AppShare ${creds_option} ; Mount-DiskImage -ImagePath '${isopath}' ; Z:\\Setup.exe /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL,AS,RS,IS,Tools /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /TCPENABLED=1",
+            creates  => "C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
+            provider => powershell
+          }
+          #onlyif   => "\$drive = ((Get-DiskImage -ImagePath '${isopath}') | Get-Volume);;if((test-path '${isopath}') -and (\$drive -eq \$null)){}else{exit 1}",
+          
         }
         'enterprise':
         {
