@@ -99,6 +99,7 @@ class sqlserver(
           exec {'sqlserver-install':
             command  => "New-PSDrive -Name Z -Root \\\\tyofiles\\AppShare -PSProvider FileSystem ${creds_option} ; Mount-DiskImage -ImagePath '${isopath}' ; Z:\\Setup.exe /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /SQLSYSADMINACCOUNTS=\"LABDB01\\Administrator\" /TCPENABLED=1",
             creates  => "C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
+            timeout  => 900,
             provider => powershell
           }
           #onlyif   => "\$drive = ((Get-DiskImage -ImagePath '${isopath}') | Get-Volume);;if((test-path '${isopath}') -and (\$drive -eq \$null)){}else{exit 1}",
