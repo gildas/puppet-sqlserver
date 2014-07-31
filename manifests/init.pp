@@ -87,7 +87,7 @@ class sqlserver(
         }
         'standard':
         {
-          $credentials  = pscredential('AddToDomainAPAC', 'Interactive!')
+          $credentials  = pscredential('APAC\AddToDomainAPAC', 'Interactive!')
           $creds_option = "-Credential ${credentials}"
           $isopath      = '\\tyofiles\AppShare\Microsoft\MSDN\SQLServer\2012\en_sql_server_2012_standard_edition_with_sp1_x64_dvd_1228198.iso'
           exec {'sqlserver-install':
