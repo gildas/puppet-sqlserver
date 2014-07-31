@@ -107,6 +107,10 @@ class sqlserver(
     {
       notice('Uninstalling Microsoft SQL Server')
     }
+    default:
+    {
+      fail("Unsupported ensure \"${ensure}\"")
+    }
   }
 
 
