@@ -36,11 +36,20 @@
 # Copyright 2013 Your name here, unless otherwise noted.
 #
 class sqlserver(
-  $ensure = installed,
-  $sa_password,
+  $ensure           = installed,
   $edition,
   $license_type,
-  $license = undef
+  $license          = undef,
+  $features         = [ 'SQL' ],
+  $instance_name    = 'MSSQLSERVER',
+  $instance_dir     = undef,
+  $sa_password      = undef,
+  $database_dir     = undef,
+  $database_log_dir = undef,
+  $backup_dir       = undef,
+  $collation        = undef,
+  $administrators   = undef,
+  $source           = undef,
 )
 {
   if ($operatingsystem != 'Windows')
@@ -55,7 +64,7 @@ class sqlserver(
   {
     installed:
     {
-      notice("Installing Microsoft SQL Server #{$edition}")
+      notice("Installing Microsoft SQL Server ${edition}")
       case $edition
       {
         'express':
@@ -87,17 +96,52 @@ class sqlserver(
         }
         'standard':
         {
+          # See: http://msdn.microsoft.com/en-us/library/ms144259.aspx#Install
+          validate_array($features)
+          validate_string($instance)
+          validate_string($source)
+          if (empty($features)) { fail("Unable to install SQL Server since no features were selected") }
+
+          # TODO: implement other features
           # With Analysis Services:
           # setup.exe ... /FEATURES=...,AS,... /ASSYSADMINACCOUNTS="LAB\Administrator"
           # With Integration Services:
           # setup.exe ... /FEATURES=...,IS,...
           # With Reporting Services:
           # setup.exe ... /FEATURES=...,RS,...
-          $credentials  = pscredential('APAC\AddToDomainAPAC', 'Interactive!')
-          $creds_option = "-Credential ${credentials}"
-          $isopath      = '\\tyofiles\AppShare\Microsoft\MSDN\SQLServer\2012\en_sql_server_2012_standard_edition_with_sp1_x64_dvd_1228198.iso'
+          $features_option = '/FEATURES=SQL'
+
+          $instance_name_option  = empty($instance_name)      ? { true => "/INSTANCENAME=\"MSSQLSERVER\"", default => "/INSTANCENAME=\"${instance_name}\"" }
+          $instance_dir_option   = empty($instance_dir)       ? { true => '', default => "/INSTANCEDIR=\"${instance_dir}\"" }
+          $license_option        = empty($license)            ? { true => '', default => "/PID=\"${license}\"" }
+          $security_option       = empty($sa_password)        ? { true => '', default => "/SECURITYMODE=SQL /SAPWD=\"${sa_password}\"" }
+          $database_dir_option   = empty($database_dir)       ? { true => '', default => "/SQLUSERDBDIR=\"${database_dir}\"" }
+          $database_log_dir_option = empty($database_log_dir) ? { true => '', default => "/SQLUSERDBLOGDIR=\"${database_log_dir}\"" }
+          $backup_dir_option     = empty($backup_dir)         ? { true => '', default => "/SQLBACKUPDIR=\"${backup_dir}\"" }
+          $collation_option      = empty($collation)          ? { true => '', default => "/SQLCOLLATION=\"${collation}\"" }
+          $administrators_option = empty($administrators)     ? { true => "/SQLSYSADMINACCOUNTS=\"${::hostname}\\Administrator\"", default => "/SQLSYSADMINACCOUNTS=\"${administrators}\"" }
+
+          $dir_option = "${instance_dir_option} ${database_dir_option} ${database_log_dir_option} ${backup_dir_option}"
+
+          case $source
+          {
+            /^smb:\/\//:
+            {
+              fail("Not implemented yet! (smb://)")
+            }
+            /^\\\\.*/:
+            {
+              $credentials  = pscredential(hiera('sqlserver::source::user'), hiera('sqlserver::source::password'))
+              $creds_option = "-Credential ${credentials}"
+              $mount_share  = "New-PSDrive -Name Z \"${source}\" -PSProvider FileSystem ${mount_creds_options}"
+              $mount_iso    = "Mount-DiskImage -ImagePath \"${source}\""
+              $install      = "${mount_share} ; ${mount_iso} ; Z:\\Setup.exe"
+            }
+            default: { fail("Unsupported source \"${source}\"") }
+          }
+
           exec {'sqlserver-install':
-            command  => "New-PSDrive -Name Z -Root \\\\tyofiles\\AppShare -PSProvider FileSystem ${creds_option} ; Mount-DiskImage -ImagePath '${isopath}' ; Z:\\Setup.exe /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install /FEATURES=SQL /INSTANCENAME=\"MSSQLSERVER\" /SECURITYMODE=SQL /SAPWD=\"${sa_password}\" /SQLSYSADMINACCOUNTS=\"LABDB01\\Administrator\" /TCPENABLED=1",
+            command  => "${install} /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${features_option} ${instance_name_option} ${security_option} ${administrators_option} ${dir_option} ${collation_option} /TCPENABLED=1 ${license_option}",
             creates  => "C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
             timeout  => 900,
             provider => powershell
