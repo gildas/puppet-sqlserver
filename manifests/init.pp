@@ -102,8 +102,19 @@ class sqlserver(
             timeout  => 900,
             provider => powershell
           }
-          #onlyif   => "\$drive = ((Get-DiskImage -ImagePath '${isopath}') | Get-Volume);;if((test-path '${isopath}') -and (\$drive -eq \$null)){}else{exit 1}",
-          
+
+          firewall::rule { 'SQLServer':
+            rule        => 'SQLServer-Instance-In-TCP',
+            ensure      => enabled,
+            create      => true,
+            display     => 'SQLServer Instance (TCP-In)',
+            description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
+            action      => 'Allow',
+            direction   => 'Inbound',
+            protocol    => 'TCP',
+            local_port  => 1433,
+            require     => Exec['sqlserver-install'],
+          }
         }
         'enterprise':
         {
