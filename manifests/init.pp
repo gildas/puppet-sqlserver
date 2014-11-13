@@ -78,6 +78,28 @@ class sqlserver(
       {
         'express':
         {
+          # SQL Server 2014 Express
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB/Express%2064BIT/SQLEXPR_x64_ENU.exe'
+
+          # SQL Server 2014 Express with tools
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB/ExpressAndTools%2064BIT/SQLEXPRWT_x64_ENU.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/B/8/5/B856F507-1B8A-4A5F-BCBF-ABEE9C70CA84/ExpressAndTools%2064BIT/SQLEXPRWT_x64_FRA.exe'
+
+          # SQL Server 2014 Management Studio (64b)
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB/MgmtStudio%2064BIT/SQLManagementStudio_x64_ENU.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/1/C/9/1C95EAB0-F98C-4039-8402-4D7A84D9B290/MgmtStudio%2064BIT/SQLManagementStudio_x64_JPN.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/B/8/5/B856F507-1B8A-4A5F-BCBF-ABEE9C70CA84/MgmtStudio%2064BIT/SQLManagementStudio_x64_FRA.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/9/9/B/99BB8518-C818-42EF-A9AA-1A06E4AC1DC6/MgmtStudio%2064BIT/SQLManagementStudio_x64_DEU.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/C/A/3/CA36A732-59EC-4CEA-971A-0269B992C82A/MgmtStudio%2064BIT/SQLManagementStudio_x64_ESN.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/C/5/A/C5ACFA2B-9DB0-44F3-BD2F-BBC567987C82/MgmtStudio%2064BIT/SQLManagementStudio_x64_CHS.exe' # Chinese Simplified
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/5/5/E/55EA61C3-4CED-455F-B09F-67608D27BEB6/MgmtStudio%2064BIT/SQLManagementStudio_x64_CHT.exe' # Chinese Traditionnal
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/5/9/9/5995FEA5-97E8-4A01-BDFB-78E27F4873AC/MgmtStudio%2064BIT/SQLManagementStudio_x64_KOR.exe'
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/0/1/5/015567C0-E851-4AC6-964F-9BBA9B31D6BC/MgmtStudio%2064BIT/SQLManagementStudio_x64_PTB.exe' # Portuguese
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/4/E/3/4E38FD5A-8859-446F-8C58-9FC70FE82BB1/MgmtStudio%2064BIT/SQLManagementStudio_x64_RUS.exe'
+
+          # SQL Server 2014 with Advanced Services
+          $sql_source  = 'http://care.dlservice.microsoft.com/dl/download/E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB/ExpressAdv%2064BIT/SQLEXPRADV_x64_ENU.exe'
+
           $sql_source  = 'http://download.microsoft.com/download/8/D/D/8DD7BDBA-CEF7-4D8E-8C16-D9F69527F909/ENU/x64/SQLEXPR_x64_ENU.exe'
           $sql_install = url_parse($sql_source, 'filename')
 
