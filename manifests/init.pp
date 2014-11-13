@@ -59,7 +59,15 @@ class sqlserver(
     fail("Unsupported OS")
   }
   validate_re($edition, ['^(?i)(express|standard|enterprise)$'])
-  validate_re($license_type, ['^(?i)(evaluation|MSDN|Volume|Retail)$'])
+  unless ($edition =~ /^(?i:express)$/)
+  {
+    validate_re($license_type, ['^(?i)(evaluation|MSDN|Volume|Retail)$'])
+    unless ($license_type =~ /^(?i:evaluation)$/)
+    {
+      validate_string($license)
+    }
+  }
+
 
   case $ensure
   {
