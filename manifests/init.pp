@@ -37,9 +37,10 @@
 #
 class sqlserver(
   $ensure           = installed,
-  $edition,
-  $license_type,
+  $edition          = 'edition',
+  $license_type     = 'evaluation',
   $license          = undef,
+  $language         = 'en',
   $features         = [ 'SQL' ],
   $instance_name    = 'MSSQLSERVER',
   $instance_dir     = undef,
