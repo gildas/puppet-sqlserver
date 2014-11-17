@@ -194,6 +194,7 @@ class sqlserver(
             command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
             creates  => "${cache_dir}/${sql_install}",
             provider => powershell,
+            timeout  => 1800,
             require  => [
                           File["${cache_dir}"],
                         ]
