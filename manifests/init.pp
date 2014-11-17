@@ -75,6 +75,15 @@ class sqlserver(
     }
   }
 
+  if (!defined($core::cache_dir))
+  {
+    $cache_dir = 'c:/windows/temp'
+  }
+  else
+  {
+    $cache_dir = $core::cache_dir
+  }
+
   case $ensure
   {
     installed:
@@ -179,22 +188,22 @@ class sqlserver(
           $options               = "${silent_option} ${features_option} ${enu_option} ${instance_name_option} ${instance_dir_option} ${security_option} ${database_dir_option} ${log_dir_option} ${backup_dir_option} ${collation_option}"
 
           exec {"sqlserver-install-download":
-            command  => "((new-object net.webclient).DownloadFile('${sql_source}','${core::cache_dir}/${sql_install}'))",
-            creates  => "${core::cache_dir}/${sql_install}",
+            command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
+            creates  => "${cache_dir}/${sql_install}",
             provider => powershell,
             require  => [
-                          File["${core::cache_dir}"],
+                          File["${cache_dir}"],
                         ]
           }
 
           exec {"sqlserver-install-run":
-            command  => "${core::cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
+            command  => "${cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
             creates  => "C:/Program Files/Microsoft SQL Server/MSSQL12.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
-            cwd      => "${core::cache_dir}",
+            cwd      => "${cache_dir}",
             provider => windows,
             timeout  => 900,
             require  => [
-                          File["${core::cache_dir}"],
+                          File["${cache_dir}"],
                           Exec['sqlserver-install-download'],
                         ]
           }
