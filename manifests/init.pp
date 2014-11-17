@@ -203,16 +203,15 @@ class sqlserver(
           debug("SQL Install Options: ${options}")
           exec {"sqlserver-install-run":
             command  => "${cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
-            creates  => "C:/Program Files/Microsoft SQL Server/MSSQL12.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
+            onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             cwd      => "${cache_dir}",
-            provider => windows,
+            provider => powershell,
             timeout  => 900,
             require  => [
                           File["${cache_dir}"],
                           Exec['sqlserver-install-download'],
                         ]
           }
-
         }
         'standard':
         {
