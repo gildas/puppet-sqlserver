@@ -55,6 +55,9 @@ class sqlserver(
   $source           = undef,
 )
 {
+  # We do not want to copy Unix modes to Windows, it tends to render files unaccessible
+  File { source_permissions => ignore }
+
   include stdlib
 
   if ($operatingsystem != 'Windows')
