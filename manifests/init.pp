@@ -55,6 +55,8 @@ class sqlserver(
   $source           = undef,
 )
 {
+  include stdlib
+
   if ($operatingsystem != 'Windows')
   {
     err("This module works on Windows only!")
