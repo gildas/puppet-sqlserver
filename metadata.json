@@ -1,11 +1,12 @@
 {
   "name": "inin-sqlserver",
   "version": "0.1.0",
-  "author": "gildas",
+  "author": "inin",
   "summary": "Microsoft SQL Server installer and provider",
+  "license": "Copyright Interactive Intelligence, Inc. 1994-2014",
   "source": "git://repo.apac.inin.com/inin-sqlserver",
   "description": "Microsoft SQL Server installer and provider for PuppetLabs",
   "dependencies": [
-    "puppetlabs/stdlib"
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"}
   ]
 }
