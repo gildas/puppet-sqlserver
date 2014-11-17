@@ -201,7 +201,7 @@ class sqlserver(
           }
 
           debug("SQL Install Options: ${options}")
-          exec {"sqlserver-install-run":
+          exec {"sqlserver-install":
             command  => "${cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
             onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             cwd      => "${cache_dir}",
@@ -211,6 +211,19 @@ class sqlserver(
                           File["${cache_dir}"],
                           Exec['sqlserver-install-download'],
                         ]
+          }
+
+          firewall::rule { 'SQLServer':
+            rule        => 'SQLServer-Instance-In-TCP',
+            ensure      => enabled,
+            create      => true,
+            display     => 'SQLServer Instance (TCP-In)',
+            description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
+            action      => 'Allow',
+            direction   => 'Inbound',
+            protocol    => 'TCP',
+            local_port  => 1433,
+            require     => Exec['sqlserver-install'],
           }
         }
         'standard':
