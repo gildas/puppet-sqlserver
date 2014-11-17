@@ -157,8 +157,8 @@ class sqlserver(
           if (member(downcase($features), 'analysis services') or member(downcase($features), 'integration services') or member(downcase($features), 'reporting services'))
           {
             $feature_AS      = member(downcase($features), 'analysis services')    ? { true => ',AS',    default => '' }
-            $feature_AS      = member(downcase($features), 'integration services') ? { true => ',IS'   , default => '' }
-            $feature_AS      = member(downcase($features), 'reporting services')   ? { true => ',RS',    default => '' }
+            $feature_IS      = member(downcase($features), 'integration services') ? { true => ',IS'   , default => '' }
+            $feature_RS      = member(downcase($features), 'reporting services')   ? { true => ',RS',    default => '' }
             $feature_tools   = member(downcase($features), 'tools')                ? { true => ',Tools', default => '' }
             $features_option = "/FEATURES=SQL${feature_AS}${feature_IS}${feature_RS}$(feature_tools}"
             $product_path    = 'ExpressAdv%2064BIT'
