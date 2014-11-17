@@ -78,9 +78,9 @@ class sqlserver(
     }
   }
   $cache_dir = hiera('core::cache_dir', 'c:/windows/temp')
-  if (!defined(File["${cache_dir}"])
+  if (!defined(File["${cache_dir}"]))
   {
-    file{${cache_dir}:
+    file {"${cache_dir}":
       ensure   => directory,
       provider => windows,
     }
