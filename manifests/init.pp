@@ -151,7 +151,7 @@ class sqlserver(
             $product_path    = 'ExpressAdv%2064BIT'
             $sql_install     = "SQLEXPRADV_x64_${install_language}.exe"
           }
-          else if (member(downcase($features), 'tools'))
+          elsif (member(downcase($features), 'tools'))
           {
             $features_option = '/FEATURES=SQL,Tools'
             $product_path    = 'ExpressAndTools%2064BIT'
