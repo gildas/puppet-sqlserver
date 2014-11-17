@@ -74,16 +74,7 @@ class sqlserver(
       validate_string($license)
     }
   }
-
-  if (!defined($core::cache_dir))
-  {
-    $cache_dir = 'c:/windows/temp'
-    notice("core module not loaded, cache folder will be: ${cache_dir}")
-  }
-  else
-  {
-    $cache_dir = $core::cache_dir
-  }
+  $cache_dir = hiera('core::cache_dir', 'c:/windows/temp')
 
   case $ensure
   {
