@@ -84,16 +84,56 @@ class sqlserver(
         {
           case $language
           {
-            /^(?i:de)$/:     { $install_language = 'DEU'; $source_path = '9/9/B/99BB8518-C818-42EF-A9AA-1A06E4AC1DC6' } # German
-            /^(?i:en)$/:     { $install_language = 'ENU'; $source_path = 'E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB' } # English
-            /^(?i:es)$/:     { $install_language = 'ESN'; $source_path = 'C/A/3/CA36A732-59EC-4CEA-971A-0269B992C82A' } # Spanish
-            /^(?i:fr)$/:     { $install_language = 'FRA'; $source_path = 'B/8/5/B856F507-1B8A-4A5F-BCBF-ABEE9C70CA84' } # French
-            /^(?i:ja)$/:     { $install_language = 'JPN'; $source_path = '1/C/9/1C95EAB0-F98C-4039-8402-4D7A84D9B290' } # Japanese
-            /^(?i:ko)$/:     { $install_language = 'KOR'; $source_path = '5/9/9/5995FEA5-97E8-4A01-BDFB-78E27F4873AC' } # Korean
-            /^(?i:pt)$/:     { $install_language = 'PTB'; $source_path = '0/1/5/015567C0-E851-4AC6-964F-9BBA9B31D6BC' } # Portuguese
-            /^(?i:ru)$/:     { $install_language = 'RUS'; $source_path = '4/E/3/4E38FD5A-8859-446F-8C58-9FC70FE82BB1' } # Russian
-            /^(?i:zh-CHS)$/: { $install_language = 'CHS'; $source_path = 'C/5/A/C5ACFA2B-9DB0-44F3-BD2F-BBC567987C82' } # Simplified Chinese
-            /^(?i:zh-CHT)$/: { $install_language = 'CHT'; $source_path = '5/5/E/55EA61C3-4CED-455F-B09F-67608D27BEB6' } # Traditional Chinese
+            /^(?i:de)$/: # German
+            {
+               $install_language = 'DEU'
+               $source_path      = '9/9/B/99BB8518-C818-42EF-A9AA-1A06E4AC1DC6'
+            }
+            /^(?i:en)$/: # English
+            {
+               $install_language = 'ENU'
+               $source_path      = 'E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB'
+            }
+            /^(?i:es)$/: # Spanish
+            {
+               $install_language = 'ESN'
+               $source_path      = 'C/A/3/CA36A732-59EC-4CEA-971A-0269B992C82A'
+            }
+            /^(?i:fr)$/: # French
+            {
+               $install_language = 'FRA'
+               $source_path      = 'B/8/5/B856F507-1B8A-4A5F-BCBF-ABEE9C70CA84'
+            }
+            /^(?i:ja)$/: # Japanese
+            { 
+               $install_language = 'JPN'
+               $source_path      = '1/C/9/1C95EAB0-F98C-4039-8402-4D7A84D9B290'
+            }
+            /^(?i:ko)$/: # Korean
+            {
+               $install_language = 'KOR'
+               $source_path      = '5/9/9/5995FEA5-97E8-4A01-BDFB-78E27F4873AC'
+            }
+            /^(?i:pt)$/: # Portuguese
+            {
+               $install_language = 'PTB'
+               $source_path      = '0/1/5/015567C0-E851-4AC6-964F-9BBA9B31D6BC'
+            }
+            /^(?i:ru)$/: # Russian
+            {
+               $install_language = 'RUS'
+               $source_path      = '4/E/3/4E38FD5A-8859-446F-8C58-9FC70FE82BB1'
+            }
+            /^(?i:zh-CHS)$/: # Simplified Chinese
+            {
+               $install_language = 'CHS'
+               $source_path      = 'C/5/A/C5ACFA2B-9DB0-44F3-BD2F-BBC567987C82'
+            }
+            /^(?i:zh-CHT)$/: # Traditional Chinese
+            {
+               $install_language = 'CHT'
+               $source_path      = '5/5/E/55EA61C3-4CED-455F-B09F-67608D27BEB6'
+            }
             default:
             {
               warn("Invalid installation language \"${language}\", defaulting to English")
