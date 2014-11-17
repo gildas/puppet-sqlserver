@@ -78,6 +78,7 @@ class sqlserver(
   if (!defined($core::cache_dir))
   {
     $cache_dir = 'c:/windows/temp'
+    notice("core module not loaded, cache folder will be: ${cache_dir}")
   }
   else
   {
@@ -187,6 +188,7 @@ class sqlserver(
           $administrators_option = empty($administrators)     ? { true => "/SQLSYSADMINACCOUNTS=\"${::hostname}\\Administrator\"", default => "/SQLSYSADMINACCOUNTS=\"${administrators}\"" }
           $options               = "${silent_option} ${features_option} ${enu_option} ${instance_name_option} ${instance_dir_option} ${security_option} ${database_dir_option} ${log_dir_option} ${backup_dir_option} ${collation_option}"
 
+          debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
           exec {"sqlserver-install-download":
             command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
             creates  => "${cache_dir}/${sql_install}",
@@ -196,6 +198,7 @@ class sqlserver(
                         ]
           }
 
+          debug("SQL Install Options: ${options}")
           exec {"sqlserver-install-run":
             command  => "${cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
             creates  => "C:/Program Files/Microsoft SQL Server/MSSQL12.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
