@@ -62,7 +62,7 @@ class sqlserver(
     err("This module works on Windows only!")
     fail("Unsupported OS")
   }
-  validate_re($language, ['ˆ(?i)(de|en|es|fr|ja|ko|pt|ru|zh-CHS|zh-CHT)'])
+  validate_re($language, ['^(?i)(de|en|es|fr|ja|ko|pt|ru|zh-CHS|zh-CHT)'])
   validate_array($features)
   if (empty($features)) { fail("Unable to continue processing SQL Server since no features were selected") }
   validate_re($edition, ['^(?i)(express|standard|enterprise)$'])
