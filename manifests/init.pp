@@ -190,7 +190,7 @@ class sqlserver(
           $options               = "${silent_option} ${features_option} ${enu_option} ${instance_name_option} ${instance_dir_option} ${security_option} ${database_dir_option} ${log_dir_option} ${backup_dir_option} ${collation_option}"
 
           debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
-          exec {"sqlserver-install-download":
+          exec {'sqlserver-install-download':
             command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
             creates  => "${cache_dir}/${sql_install}",
             provider => powershell,
@@ -200,8 +200,30 @@ class sqlserver(
                         ]
           }
 
+          case $::operatingsystemrelease
+          {
+            '6.1.7601', '2008 R2': # Windows 7, 2008R2
+            {
+              exec {'sqlserver-Net-Framework-Core':
+                  command  => "Add-WindowsFeature -Name AS-Net-Framework",
+                  onlyif   => "if ((Get-WindowsFeature AS-Net-Framework) | where { \$_.InstallState -eq 'Installed'}) { exit 1 }",
+                  provider => powershell,
+                  timeout  => 600,
+              }
+            }
+            default:
+            {
+              exec {'sqlserver-Net-Framework-Core':
+                  command  => "Install-WindowsFeature -Name Net-Framework-Core",
+                  onlyif   => "if ((Get-WindowsFeature Net-Framework-Core) | where { \$_.InstallState -eq 'Installed'}) { exit 1 }",
+                  provider => powershell,
+                  timeout  => 600,
+              }
+            }
+          }
+
           debug("SQL Install Options: ${options}")
-          exec {"sqlserver-install":
+          exec {'sqlserver-install':
             command  => "${cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
             onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             cwd      => "${cache_dir}",
@@ -210,6 +232,7 @@ class sqlserver(
             require  => [
                           File["${cache_dir}"],
                           Exec['sqlserver-install-download'],
+                          Exec['sqlserver-Net-Framework-Core'],
                         ]
           }
 
