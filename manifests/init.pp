@@ -189,17 +189,6 @@ class sqlserver(
           $administrators_option = empty($administrators)     ? { true => "/SQLSYSADMINACCOUNTS=\"${::hostname}\\Administrator\"", default => "/SQLSYSADMINACCOUNTS=\"${administrators}\"" }
           $options               = "${silent_option} ${features_option} ${enu_option} ${instance_name_option} ${instance_dir_option} ${security_option} ${database_dir_option} ${log_dir_option} ${backup_dir_option} ${collation_option}"
 
-          debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
-          exec {'sqlserver-install-download':
-            command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
-            creates  => "${cache_dir}/${sql_install}",
-            provider => powershell,
-            timeout  => 1800,
-            require  => [
-                          File["${cache_dir}"],
-                        ]
-          }
-
           case $::operatingsystemrelease
           {
             '6.1.7601', '2008 R2': # Windows 7, 2008R2
@@ -220,6 +209,17 @@ class sqlserver(
                   timeout  => 600,
               }
             }
+          }
+
+          debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
+          exec {'sqlserver-install-download':
+            command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
+            creates  => "${cache_dir}/${sql_install}",
+            provider => powershell,
+            timeout  => 1800,
+            require  => [
+                          File["${cache_dir}"],
+                        ]
           }
 
           debug("SQL Install Options: ${options}")
