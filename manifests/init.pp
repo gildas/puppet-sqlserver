@@ -222,16 +222,33 @@ class sqlserver(
                         ]
           }
 
+          file {"${cache_dir}/SQLSERVER-INSTALL":
+            ensure   => directory,
+            provider => windows,
+          }
+
+          exec {'sqlserver-install-extract':
+            command  => "${cache_dir}/${sql_install} /X /Q",
+            creates  => "${cache_dir}/${sql_install}/SETUP.EXE",
+            provider => powershell,
+            timeout  => 1800,
+            require  => [
+                          File["${cache_dir}"],
+                          File["${cache_dir}/SQLSERVER-INSTALL"],
+                          Exec['sqlserver-install-download'],
+                        ]
+          }
+
           debug("SQL Install Options: ${options}")
           exec {'sqlserver-install':
-            command  => "${cache_dir}/${sql_install} /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
+            command  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
             onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             cwd      => "${cache_dir}",
             provider => powershell,
             timeout  => 900,
             require  => [
                           File["${cache_dir}"],
-                          Exec['sqlserver-install-download'],
+                          Exec['sqlserver-install-extract'],
                           Exec['sqlserver-Net-Framework-Core'],
                         ]
           }
