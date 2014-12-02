@@ -23,6 +23,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--cpus", "2"]
   end
 
+  config.vm.provision "shell", inline: "chocolatey install git"
+  config.vm.provision "shell", inline: "chocolatey install vim"
+  config.vm.provision "shell", inline: "chocolatey install puppet"
+  config.vm.provision "puppet" do |puppet|
+    puppet.manifests_path = "."
+    puppet.manifest_file  = "puppetforge-certificate.pp"
+  end
+  config.vm.provision "shell", inline: "puppet module install gildas-firewall"
+  config.vm.provision "shell", inline: "cd C:/ProgramData/PuppetLabs/puppet/etc/modules ; if (Test-Path sqlserver) { cd sqlserver git pull } else { git clone https://github.com/gildas/puppet-sqlserver sqlserver }"
+
   config.vm.provision "puppet" do |puppet|
     puppet.manifests_path = "."
     puppet.manifest_file  = "init.pp"
