@@ -222,8 +222,10 @@ class sqlserver(
                         ]
           }
 
+          # We need to wait a few seconds as the extraction happens in a background copy of the process
+          # TODO: Find a better way than a lazy sleep!
           exec {'sqlserver-install-extract':
-            command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q",
+            command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
             creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
             cwd      => "${cache_dir}",
             provider => powershell,
