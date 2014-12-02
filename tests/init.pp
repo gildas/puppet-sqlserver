@@ -10,5 +10,6 @@
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
 class {'sqlserver':
-  features => [ 'SQL', 'tools' ],
+  features    => [ 'SQL', 'tools' ],
+  sa_password => 'S3cr3t',
 }
