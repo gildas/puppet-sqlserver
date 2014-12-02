@@ -239,6 +239,15 @@ class sqlserver(
                         ]
           }
 
+          exec {'sqlserver-install-extract-sleep':
+            command  => "Start-Sleep -Seconds 60",
+            provider => powershell,
+            timeout  => 1800,
+            require  => [
+                          Exec['sqlserver-install-extract'],
+                        ]
+          }
+
           debug("SQL Install Options: ${options}")
           exec {'sqlserver-install':
             command  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
@@ -249,6 +258,7 @@ class sqlserver(
             require  => [
                           File["${cache_dir}"],
                           Exec['sqlserver-install-extract'],
+                          Exec['sqlserver-install-extract-sleep'],
                           Exec['sqlserver-Net-Framework-Core'],
                         ]
           }
