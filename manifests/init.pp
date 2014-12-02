@@ -269,7 +269,7 @@ class sqlserver(
             action      => 'Allow',
             direction   => 'Inbound',
             protocol    => 'TCP',
-            local_port  => 1433,
+            local_port  => '1433',
             require     => Exec['sqlserver-install'],
           }
         }
