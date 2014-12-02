@@ -222,19 +222,14 @@ class sqlserver(
                         ]
           }
 
-          file {"${cache_dir}/SQLSERVER-INSTALL":
-            ensure   => directory,
-            provider => windows,
-          }
-
           exec {'sqlserver-install-extract':
-            command  => "${cache_dir}/${sql_install} /X /Q",
-            creates  => "${cache_dir}/${sql_install}/SETUP.EXE",
+            command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q",
+            creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
+            cwd      => "${cache_dir}",
             provider => powershell,
             timeout  => 1800,
             require  => [
                           File["${cache_dir}"],
-                          File["${cache_dir}/SQLSERVER-INSTALL"],
                           Exec['sqlserver-install-download'],
                         ]
           }
