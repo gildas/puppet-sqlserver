@@ -176,14 +176,14 @@ class sqlserver(
             $product_path    = 'Express%2064BIT'
             $sql_install     = "SQLEXPR_x64_${install_language}.exe"
           }
-          $sql_source            = "http://care.dlservice.microsoft.com/dl/download/${source_path}/${product_path}/${sql_install}"
+          $sql_source            = empty($source)             ? { true => "http://care.dlservice.microsoft.com/dl/download/${source_path}/${product_path}/${sql_install}", default => "${source}/${sql_install}" }
           $silent_option         = $show_progress             ? { true => "/QS", default => "/Q" }
           $enu_option            = $force_english             ? { true => "/ENU", default => '' }
           $instance_name_option  = empty($instance_name)      ? { true => "/INSTANCENAME=\"MSSQLSERVER\"", default => "/INSTANCENAME=\"${instance_name}\"" }
           $instance_dir_option   = empty($instance_dir)       ? { true => '', default => "/INSTANCEDIR=\"${instance_dir}\"" }
           $security_option       = empty($sa_password)        ? { true => '', default => "/SECURITYMODE=SQL /SAPWD=\"${sa_password}\"" }
           $database_dir_option   = empty($database_dir)       ? { true => '', default => "/SQLUSERDBDIR=\"${database_dir}\"" }
-          $log_dir_option        = empty($database_log_dir) ? { true => '', default => "/SQLUSERDBLOGDIR=\"${database_log_dir}\"" }
+          $log_dir_option        = empty($database_log_dir)   ? { true => '', default => "/SQLUSERDBLOGDIR=\"${database_log_dir}\"" }
           $backup_dir_option     = empty($backup_dir)         ? { true => '', default => "/SQLBACKUPDIR=\"${backup_dir}\"" }
           $collation_option      = empty($collation)          ? { true => '', default => "/SQLCOLLATION=\"${collation}\"" }
           $administrators_option = empty($administrators)     ? { true => "/SQLSYSADMINACCOUNTS=\"${::hostname}\\Administrator\"", default => "/SQLSYSADMINACCOUNTS=\"${administrators}\"" }
@@ -211,29 +211,47 @@ class sqlserver(
             }
           }
 
-          debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
-          exec {'sqlserver-install-download':
-            command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
-            creates  => "${cache_dir}/${sql_install}",
-            provider => powershell,
-            timeout  => 1800,
-            require  => [
-                          File["${cache_dir}"],
-                        ]
-          }
+          if (!empty($source))
+          {
+            debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
+            exec {'sqlserver-install-download':
+              command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
+              creates  => "${cache_dir}/${sql_install}",
+              provider => powershell,
+              timeout  => 1800,
+              require  => [
+                            File["${cache_dir}"],
+                          ]
+            }
 
-          # We need to wait a few seconds as the extraction happens in a background copy of the process
-          # TODO: Find a better way than a lazy sleep!
-          exec {'sqlserver-install-extract':
-            command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
-            creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
-            cwd      => "${cache_dir}",
-            provider => powershell,
-            timeout  => 1800,
-            require  => [
-                          File["${cache_dir}"],
-                          Exec['sqlserver-install-download'],
-                        ]
+            # We need to wait a few seconds as the extraction happens in a background copy of the process
+            # TODO: Find a better way than a lazy sleep!
+            exec {'sqlserver-install-extract':
+              command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
+              creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
+              cwd      => "${cache_dir}",
+              provider => powershell,
+              timeout  => 1800,
+              require  => [
+                            File["${cache_dir}"],
+                            Exec['sqlserver-install-download'],
+                          ]
+            }
+          }
+          else
+          {
+            # We need to wait a few seconds as the extraction happens in a background copy of the process
+            # TODO: Find a better way than a lazy sleep!
+            exec {'sqlserver-install-extract':
+              command  => "${source}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
+              creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
+              cwd      => "${cache_dir}",
+              provider => powershell,
+              timeout  => 1800,
+              require  => [
+                            File["${cache_dir}"],
+                          ]
+            }
           }
 
           exec {'sqlserver-install-extract-sleep':
