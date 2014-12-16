@@ -211,7 +211,7 @@ class sqlserver(
             }
           }
 
-          if (!empty($source))
+          if ($source != undef)
           {
             debug("Downloading ${sql_source} into ${cache_dir}/${sql_install}")
             exec {'sqlserver-install-download':
