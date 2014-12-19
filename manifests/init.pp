@@ -53,6 +53,8 @@ class sqlserver(
   $show_progress    = false,
   $force_english    = false,
   $source           = undef,
+  $source_user      = undef,
+  $source_password  = undef,
 )
 {
   # We do not want to copy Unix modes to Windows, it tends to render files unaccessible
@@ -245,15 +247,34 @@ class sqlserver(
             # We need to wait a few seconds as the extraction happens in a background copy of the process
             # TODO: Find a better way than a lazy sleep!
             debug("Extracting install in ${cache_dir}")
-            exec {'sqlserver-install-extract':
-              command  => "${source}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
-              creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
-              cwd      => "${cache_dir}",
-              provider => powershell,
-              timeout  => 1800,
-              require  => [
-                            File["${cache_dir}"],
-                          ]
+            if ($source =~ /^\\\\.*/) # source is a UNC
+            {
+              debug("Mounting ${source} as user ${source_user}")
+              $credentials = empty($source_user) ? { true => '', default => "-Credential (New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList \"${source_user}\", (ConvertTo-SecureString -String \"${source_password}\" -AsPlainText -Force))" }
+              $mount = "New-PSDrive -Name Z \"${source}\" -PSProvider FileSystem ${credentials}"
+              exec {'sqlserver-install-extract':
+                command  => "${mount} ; ${source}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
+                creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
+                cwd      => "${cache_dir}",
+                provider => powershell,
+                timeout  => 1800,
+                require  => [
+                              File["${cache_dir}"],
+                            ]
+              }
+            }
+            else
+            {
+              exec {'sqlserver-install-extract':
+                command  => "${source}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
+                creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
+                cwd      => "${cache_dir}",
+                provider => powershell,
+                timeout  => 1800,
+                require  => [
+                              File["${cache_dir}"],
+                            ]
+              }
             }
           }
 

@@ -123,8 +123,19 @@ The class supports the following options (alphabetical order):
   + Default value: **false**
 - source
   This option specifies the path of the ISO containing the SQL Server installation.
+
   When installing SQL Express, if this option is used, it should point to the path where the installation is stored.
+
+  Only local and UNC sources are supported at the moment.
   + Possible Values: *undef*, folder
+  + Default value: *undef*
+- source_user
+  This option specifies the user to authenticate with the source.
+  + Possible Values: *undef*, string
+  + Default value: *undef*
+- source_password
+  This option specifies the password to authenticate with the source.
+  + Possible Values: *undef*, string
   + Default value: *undef*
 
 Notes and Caveats:
