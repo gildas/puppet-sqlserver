@@ -1,40 +1,61 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
+Dir.mkdir 'tmp' unless Dir.exist? 'tmp'
 
-Vagrant.require_version '>= 1.6.0'
+Vagrant.configure('2') do |config|
+  config.vm.box               = "windows-2012R2-full-standard-eval"
+  #config.vm.box_url           = "#{ENV['BOX_URL']}"
+  config.vm.box_check_update  = false
 
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "PierrickL/win2012r2trial"
+  config.vm.guest             = :windows
+  config.windows.halt_timeout = 15
+  config.vm.communicator      = "winrm"
 
-  config.vm.guest = :windows
-  config.vm.communicator = "winrm"
+  config.winrm.username = 'vagrant'
+  config.winrm.password = 'vagrant'
 
-  config.vm.synced_folder ".", "/vagrant"
+  config.vm.network :forwarded_port, guest: 5985, host: 5985, id: 'winrm', auto_correct: true
+  config.vm.network :forwarded_port, guest: 3389, host: 3389, id: 'rdp',   auto_correct: true
 
-  config.vm.provider "virtualbox" do |vb|
-    # Don't boot with headless mode
-    vb.gui = true
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
-    vb.customize ["modifyvm", :id, "--ioapic", "on"] # If you don't set this, you won't be able to assign multiple CPUs to the VM
-    vb.customize ["modifyvm", :id, "--cpus", "2"]
+  config.vm.synced_folder "tmp", "/Users/Public/Cache"
+  config.vm.synced_folder "..", "/puppet-sqlserver"
+  config.vm.synced_folder ".",   "/vagrant"
+
+  config.vm.provider :virtualbox do |provider, override|
+    provider.gui = true
+    provider.customize ['modifyvm', :id, '--ioapic', 'on'] # So we can assign multiple CPUs to the VM
+    provider.customize ['modifyvm', :id, '--memory', 2048]
+    provider.customize ['modifyvm', :id, '--cpus', 2]
   end
 
-  config.vm.provision "shell", inline: "chocolatey install git"
-  config.vm.provision "shell", inline: "chocolatey install vim"
-  config.vm.provision "shell", inline: "chocolatey install puppet"
-  config.vm.provision "puppet" do |puppet|
-    puppet.manifests_path = "."
-    puppet.manifest_file  = "puppetforge-certificate.pp"
+  config.vm.provider :vmware_fusion do |provider, override|
+    provider.gui = true
+    provider.vmx['memsize']  = '2048'
+    provider.vmx['numvcpus'] = '2'
   end
-  config.vm.provision "shell", inline: "puppet module install gildas-firewall"
-  config.vm.provision "shell", inline: "cd C:/ProgramData/PuppetLabs/puppet/etc/modules ; if (Test-Path sqlserver) { cd sqlserver git pull } else { git clone https://github.com/gildas/puppet-sqlserver sqlserver }"
 
-  config.vm.provision "puppet" do |puppet|
+  config.vm.provision 'Install git',    type: :shell, inline: "if (! (chocolatey list -local | Select-String git)) { chocolatey install git }"
+  config.vm.provision 'Install VIM',    type: :shell, inline: "if (! (chocolatey list -local | Select-String vim)) { chocolatey install vim }"
+  config.vm.provision 'Install puppet', type: :shell, inline: "if (! (chocolatey list -local | Select-String puppet)) { chocolatey install puppet }"
+
+  #config.vm.provision "puppet" do |puppet|
+  #  puppet.manifests_path = "."
+  #  puppet.manifest_file  = "puppetforge-certificate.pp"
+  #end
+
+  config.vm.provision 'Puppet Module stdlib', type: :shell, inline: "if (puppet module list | Select-String puppetlabs-stdlib) { puppet module upgrade puppetlabs-stdlib } else { puppet module install puppetlabs-stdlib}"
+  config.vm.provision 'Puppet Module Powershell', type: :shell, inline: "if (puppet module list | Select-String puppetlabs-powershell) { puppet module upgrade puppetlabs-powershell } else { puppet module install puppetlabs-powershell}"
+  config.vm.provision 'Puppet Module Firewall', type: :shell, inline: "if (puppet module list | Select-String gildas-firewall) { puppet module upgrade gildas-firewall } else { puppet module install gildas-firewall}"
+
+  puppet_module_dir = "${env:ProgramData}/PuppetLabs/puppet/etc/modules"
+  config.vm.provision 'Clean Puppet Module SqlServer', type: :shell, inline: "if (! (Test-Path #{puppet_module_dir}/sqlserver/.git)) { Remove-Item -Path #{puppet_module_dir}/sqlserver -Recurse -Force }"
+  config.vm.provision 'Puppet Module SqlServer', type: :shell, inline: "if (Test-Path #{puppet_module_dir}/sqlserver) { git --git-dir=#{puppet_module_dir}/sqlserver/.git pull } else { git clone https://github.com/gildas/puppet-sqlserver #{puppet_module_dir}/sqlserver }"
+  config.vm.provision 'Use Latest Manifest', type: :shell, inline: "Copy-Item /puppet-sqlserver/manifests/init.pp #{puppet_module_dir}/sqlserver/manifests -Force"
+
+  config.vm.provision :puppet do |puppet|
     puppet.manifests_path = "."
     puppet.manifest_file  = "init.pp"
+    puppet.options        = "--verbose --debug"
   end
 end
