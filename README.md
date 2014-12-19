@@ -123,7 +123,7 @@ The class supports the following options (alphabetical order):
   + Default value: **false**
 - source
   This option specifies the path of the ISO containing the SQL Server installation.
-  This option is ignored when installing SQL Express.
+  When installing SQL Express, if this option is used, it should point to the path where the installation is stored.
   + Possible Values: *undef*, folder
   + Default value: *undef*
 

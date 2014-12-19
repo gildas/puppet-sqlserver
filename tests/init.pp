@@ -12,4 +12,5 @@
 class {'sqlserver':
   features    => [ 'SQL', 'tools' ],
   sa_password => 'S3cr3t',
+  source      => 'C:/Users/Public/Cache'
 }
