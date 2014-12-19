@@ -1,14 +1,22 @@
 {
-  "name": "gildas-sqlserver",
-  "version": "0.1.0",
-  "author": "Gildas CHERRUEL",
-  "summary": "Microsoft SQL Server installer and provider",
-  "license": "Copyright Interactive Intelligence, Inc. 1994-2014",
-  "source": "git://repo.apac.inin.com/inin-sqlserver",
-  "description": "Microsoft SQL Server installer and provider for PuppetLabs",
+  "name":         "gildas-sqlserver",
+  "version":      "0.2.0",
+  "author":       "Gildas CHERRUEL",
+  "summary":      "Microsoft SQL Server installer and provider",
+  "license":      "Apache License, Version 2.0",
+  "source":       "https://github.com/gildas/puppet-sqlserver",
+  "project_page": "https://github.com/gildas/puppet-sqlserver",
+  "issues_url":   "https://github.com/gildas/puppet-sqlserver/issues",
+  "description":  "Microsoft SQL Server installer and provider for PuppetLabs",
+  "operatingsystem_support": [
+    {
+      "operatingsystem":        "windows",
+      "operatingsystemrelease": [ "2012 R2" ]
+    }
+  ],
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
-    {"name":"puppetlabs-powershell","version_requirement":">= 1.0.0"},
-    {"name":"gildas-firewall","version_requirement":">= 0.1.0"}
+    {"name": "puppetlabs/stdlib",     "version_requirement": ">= 1.0.0"},
+    {"name": "puppetlabs/powershell", "version_requirement": ">= 1.0.0"},
+    {"name": "gildas/firewall",       "version_requirement": ">= 0.1.0"}
   ]
 }
