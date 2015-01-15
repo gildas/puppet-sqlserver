@@ -289,7 +289,8 @@ class sqlserver(
 
           debug("SQL Install Options: ${options}")
           exec {'sqlserver-install':
-            command  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1",
+            command  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1 /SKIPRULES=RebootRequiredCheck",
+            returns  => [0, 1],
             onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             cwd      => "${cache_dir}",
             provider => powershell,
