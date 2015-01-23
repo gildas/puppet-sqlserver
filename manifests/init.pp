@@ -279,7 +279,7 @@ class sqlserver(
           }
 
           exec {'sqlserver-install-extract-sleep':
-            command  => "Start-Sleep -Seconds 60",
+            command  => "Start-Sleep -Seconds 180",
             provider => powershell,
             timeout  => 1800,
             require  => [
