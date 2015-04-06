@@ -219,6 +219,7 @@ class sqlserver(
             exec {'sqlserver-install-download':
               command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
               creates  => "${cache_dir}/${sql_install}",
+			  onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
               provider => powershell,
               timeout  => 1800,
               require  => [
@@ -232,6 +233,7 @@ class sqlserver(
             exec {'sqlserver-install-extract':
               command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
               creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
+			  onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
               cwd      => "${cache_dir}",
               provider => powershell,
               timeout  => 1800,
@@ -270,6 +272,7 @@ class sqlserver(
                 creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
                 cwd      => "${cache_dir}",
                 provider => powershell,
+				onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
                 timeout  => 1800,
                 require  => [
                               File["${cache_dir}"],
@@ -281,6 +284,7 @@ class sqlserver(
           exec {'sqlserver-install-extract-sleep':
             command  => "Start-Sleep -Seconds 180",
             provider => powershell,
+			onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             timeout  => 1800,
             require  => [
                           Exec['sqlserver-install-extract'],
