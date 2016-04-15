@@ -55,7 +55,7 @@ class sqlserver(
   $source           = undef,
   $source_user      = undef,
   $source_password  = undef,
-  manage_firewall   = true,
+  $manage_firewall  = true,
 )
 {
   # We do not want to copy Unix modes to Windows, it tends to render files unaccessible
