@@ -163,7 +163,7 @@ class sqlserver(
             $feature_IS      = member(downcase($features), 'integration services') ? { true => ',IS'   , default => '' }
             $feature_RS      = member(downcase($features), 'reporting services')   ? { true => ',RS',    default => '' }
             $feature_tools   = member(downcase($features), 'tools')                ? { true => ',Tools', default => '' }
-            $features_option = "/FEATURES=SQL${feature_AS}${feature_IS}${feature_RS}$(feature_tools}"
+            $features_option = "/FEATURES=SQL${feature_AS}${feature_IS}${feature_RS}${feature_tools}"
             $product_path    = 'ExpressAdv%2064BIT'
             $sql_install     = "SQLEXPRADV_x64_${install_language}.exe"
           }
