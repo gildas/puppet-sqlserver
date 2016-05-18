@@ -1,3 +1,13 @@
+##2016-05-18 - Version 0.2.6
+###Summary
+
+ This release contains bug fixes 
+
+###Features
+
+###Bugfixes
+- Fixed all warnings/errors from Puppet Lint
+
 ##2016-05-18 - Version 0.2.5
 ###Summary
 
