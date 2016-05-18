@@ -1,4 +1,14 @@
-##2014-12-19 - Version 0.2.4
+##2016-05-18 - Version 0.2.5
+###Summary
+
+ This release contains bug fixes 
+
+###Features
+
+###Bugfixes
+- Better metadata descriptions for the forge.
+
+##2016-05-18 - Version 0.2.4
 ###Summary
 
  This release contains bug fixes and allows to prevent the manifest from updating the firewall.
