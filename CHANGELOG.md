@@ -1,3 +1,15 @@
+##2014-12-19 - Version 0.2.2
+###Summary
+
+ This release contains bug fixes and allows to prevent the manifest from updating the firewall.
+
+###Features
+- New option to not update the firewall. (By default: the firewall is updated)
+
+###Bugfixes
+- Typos
+
+
 ##2014-12-19 - Version 0.2.1
 ###Summary
 
