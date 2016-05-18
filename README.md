@@ -144,16 +144,3 @@ The class supports the following options (alphabetical order):
 
 Notes and Caveats:
 > By default only SQL is installed! Do not forget to add the feature 'Tools' to get Management Studio and other SQL tools.
-
-License
--------
-
-
-Contact
--------
-
-
-Support
--------
-
-Please log tickets and issues at our [Projects site](http://projects.example.com)
