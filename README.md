@@ -113,6 +113,10 @@ The class supports the following options (alphabetical order):
   This option contains the type of license to use. This option is ignored when installing SQL Express.
   + Possible Values: Evaluation, MSDN, Volume, Retail.
   + Default value: Evaluation
+- manage_firewall
+  If **true**, the manifest will create firewall rules to accept incoming SQL traffic.
+  + Possible Values: true, false.
+  + Default value: **true**
 - sa_password
   If provided, SQL Server will be installed with Windows and SQL authentication. If not, Windows authentication only will be used.
   + Possible Values: *undef*, *string*
