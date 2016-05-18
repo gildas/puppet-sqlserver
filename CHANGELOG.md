@@ -1,4 +1,4 @@
-##2014-12-19 - Version 0.2.2
+##2014-12-19 - Version 0.2.4
 ###Summary
 
  This release contains bug fixes and allows to prevent the manifest from updating the firewall.
