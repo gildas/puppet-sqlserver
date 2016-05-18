@@ -19,3 +19,18 @@ pkg/
 
 # Vagrant files
 .vagrant/
+
+# logs, temp
+tmp/
+[Ll]og/
+[Ll]ogs/
+*.log
+*~
+*.swp
+*.bak
+
+# Windows specific files
+[tT]humbs.db
+
+# Mac OS/X specific files
+.DS_Store
