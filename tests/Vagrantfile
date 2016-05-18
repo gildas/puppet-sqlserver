@@ -1,13 +1,17 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Dir.mkdir 'tmp' unless Dir.exist? 'tmp'
+cache_dir = (ENV['DAAS_CACHE'] || case RUBY_PLATFORM
+  when 'x64-mingw32' then File.join(ENV['PROGRAMDATA'], 'DaaS', 'cache')
+  else File.join('/var', 'cache', 'daas')
+  end).gsub(/\\/, '/')
+Dir.mkdir cache_dir unless Dir.exist? cache_dir
 
 Vagrant.configure('2') do |config|
   config.vm.box               = "windows-2012R2-full-standard-eval"
-  #config.vm.box_url           = "#{ENV['BOX_URL']}"
   config.vm.box_check_update  = false
 
+  config.vm.hostname          = 'test-puppet-sqlserver'
   config.vm.guest             = :windows
   config.windows.halt_timeout = 15
   config.vm.communicator      = "winrm"
@@ -18,7 +22,7 @@ Vagrant.configure('2') do |config|
   config.vm.network :forwarded_port, guest: 5985, host: 5985, id: 'winrm', auto_correct: true
   config.vm.network :forwarded_port, guest: 3389, host: 3389, id: 'rdp',   auto_correct: true
 
-  config.vm.synced_folder "tmp", "/Users/Public/Cache"
+  config.vm.synced_folder cache_dir, "/Users/Public/Cache"
   config.vm.synced_folder "..", "/puppet-sqlserver"
   config.vm.synced_folder ".",   "/vagrant"
 
@@ -27,6 +31,9 @@ Vagrant.configure('2') do |config|
     provider.customize ['modifyvm', :id, '--ioapic', 'on'] # So we can assign multiple CPUs to the VM
     provider.customize ['modifyvm', :id, '--memory', 2048]
     provider.customize ['modifyvm', :id, '--cpus', 2]
+    provider.customize ['modifyvm', :id, '--vram',        128]
+    provider.customize ['modifyvm', :id, '--clipboard',   'bidirectional']
+    provider.customize ['modifyvm', :id, '--draganddrop', 'bidirectional']
   end
 
   config.vm.provider :vmware_fusion do |provider, override|
