@@ -63,14 +63,14 @@ class sqlserver(
 
   include stdlib
 
-  if ($operatingsystem != 'Windows')
+  if ($::operatingsystem != 'Windows')
   {
-    err("This module works on Windows only!")
-    fail("Unsupported OS")
+    err('This module works on Windows only!')
+    fail('Unsupported OS')
   }
   validate_re($language, ['^(?i)(de|en|es|fr|ja|ko|pt|ru|zh-CHS|zh-CHT)'])
   validate_array($features)
-  if (empty($features)) { fail("Unable to continue processing SQL Server since no features were selected") }
+  if (empty($features)) { fail('Unable to continue processing SQL Server since no features were selected') }
   validate_re($edition, ['^(?i)(express|standard|enterprise)$'])
   unless ($edition =~ /^(?i:express)$/)
   {
@@ -81,9 +81,9 @@ class sqlserver(
     }
   }
   $cache_dir = hiera('core::cache_dir', 'c:/windows/temp')
-  if (!defined(File["${cache_dir}"]))
+  if (!defined(File[$cache_dir]))
   {
-    file {"${cache_dir}":
+    file {$cache_dir:
       ensure   => directory,
       provider => windows,
     }
@@ -102,53 +102,53 @@ class sqlserver(
           {
             /^(?i:de)$/: # German
             {
-               $install_language = 'DEU'
-               $source_path      = '9/9/B/99BB8518-C818-42EF-A9AA-1A06E4AC1DC6'
+              $install_language = 'DEU'
+              $source_path      = '9/9/B/99BB8518-C818-42EF-A9AA-1A06E4AC1DC6'
             }
             /^(?i:en)$/: # English
             {
-               $install_language = 'ENU'
-               $source_path      = 'E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB'
+              $install_language = 'ENU'
+              $source_path      = 'E/A/E/EAE6F7FC-767A-4038-A954-49B8B05D04EB'
             }
             /^(?i:es)$/: # Spanish
             {
-               $install_language = 'ESN'
-               $source_path      = 'C/A/3/CA36A732-59EC-4CEA-971A-0269B992C82A'
+              $install_language = 'ESN'
+              $source_path      = 'C/A/3/CA36A732-59EC-4CEA-971A-0269B992C82A'
             }
             /^(?i:fr)$/: # French
             {
-               $install_language = 'FRA'
-               $source_path      = 'B/8/5/B856F507-1B8A-4A5F-BCBF-ABEE9C70CA84'
+              $install_language = 'FRA'
+              $source_path      = 'B/8/5/B856F507-1B8A-4A5F-BCBF-ABEE9C70CA84'
             }
             /^(?i:ja)$/: # Japanese
-            { 
-               $install_language = 'JPN'
-               $source_path      = '1/C/9/1C95EAB0-F98C-4039-8402-4D7A84D9B290'
+            {
+              $install_language = 'JPN'
+              $source_path      = '1/C/9/1C95EAB0-F98C-4039-8402-4D7A84D9B290'
             }
             /^(?i:ko)$/: # Korean
             {
-               $install_language = 'KOR'
-               $source_path      = '5/9/9/5995FEA5-97E8-4A01-BDFB-78E27F4873AC'
+              $install_language = 'KOR'
+              $source_path      = '5/9/9/5995FEA5-97E8-4A01-BDFB-78E27F4873AC'
             }
             /^(?i:pt)$/: # Portuguese
             {
-               $install_language = 'PTB'
-               $source_path      = '0/1/5/015567C0-E851-4AC6-964F-9BBA9B31D6BC'
+              $install_language = 'PTB'
+              $source_path      = '0/1/5/015567C0-E851-4AC6-964F-9BBA9B31D6BC'
             }
             /^(?i:ru)$/: # Russian
             {
-               $install_language = 'RUS'
-               $source_path      = '4/E/3/4E38FD5A-8859-446F-8C58-9FC70FE82BB1'
+              $install_language = 'RUS'
+              $source_path      = '4/E/3/4E38FD5A-8859-446F-8C58-9FC70FE82BB1'
             }
             /^(?i:zh-CHS)$/: # Simplified Chinese
             {
-               $install_language = 'CHS'
-               $source_path      = 'C/5/A/C5ACFA2B-9DB0-44F3-BD2F-BBC567987C82'
+              $install_language = 'CHS'
+              $source_path      = 'C/5/A/C5ACFA2B-9DB0-44F3-BD2F-BBC567987C82'
             }
             /^(?i:zh-CHT)$/: # Traditional Chinese
             {
-               $install_language = 'CHT'
-               $source_path      = '5/5/E/55EA61C3-4CED-455F-B09F-67608D27BEB6'
+              $install_language = 'CHT'
+              $source_path      = '5/5/E/55EA61C3-4CED-455F-B09F-67608D27BEB6'
             }
             default:
             {
@@ -180,8 +180,8 @@ class sqlserver(
             $sql_install     = "SQLEXPR_x64_${install_language}.exe"
           }
           $sql_source            = empty($source)             ? { true => "http://download.microsoft.com/download/${source_path}/${product_path}/${sql_install}", default => "${source}/${sql_install}" }
-          $silent_option         = $show_progress             ? { true => "/QS", default => "/Q" }
-          $enu_option            = $force_english             ? { true => "/ENU", default => '' }
+          $silent_option         = $show_progress             ? { true => '/QS', default => '/Q' }
+          $enu_option            = $force_english             ? { true => '/ENU', default => '' }
           $instance_name_option  = empty($instance_name)      ? { true => "/INSTANCENAME=\"MSSQLSERVER\"", default => "/INSTANCENAME=\"${instance_name}\"" }
           $instance_dir_option   = empty($instance_dir)       ? { true => '', default => "/INSTANCEDIR=\"${instance_dir}\"" }
           $security_option       = empty($sa_password)        ? { true => '', default => "/SECURITYMODE=SQL /SAPWD=\"${sa_password}\"" }
@@ -197,7 +197,7 @@ class sqlserver(
             '6.1.7601', '2008 R2': # Windows 7, 2008R2
             {
               exec {'sqlserver-Net-Framework-Core':
-                  command  => "Add-WindowsFeature -Name AS-Net-Framework",
+                  command  => 'Add-WindowsFeature -Name AS-Net-Framework',
                   onlyif   => "if ((Get-WindowsFeature AS-Net-Framework) | where { \$_.InstallState -eq 'Installed'}) { exit 1 }",
                   provider => powershell,
                   timeout  => 600,
@@ -206,7 +206,7 @@ class sqlserver(
             default:
             {
               exec {'sqlserver-Net-Framework-Core':
-                  command  => "Install-WindowsFeature -Name Net-Framework-Core",
+                  command  => 'Install-WindowsFeature -Name Net-Framework-Core',
                   onlyif   => "if ((Get-WindowsFeature Net-Framework-Core) | where { \$_.InstallState -eq 'Installed'}) { exit 1 }",
                   provider => powershell,
                   timeout  => 600,
@@ -220,11 +220,11 @@ class sqlserver(
             exec {'sqlserver-install-download':
               command  => "((new-object net.webclient).DownloadFile('${sql_source}','${cache_dir}/${sql_install}'))",
               creates  => "${cache_dir}/${sql_install}",
-			  onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
+              onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
               provider => powershell,
               timeout  => 1800,
               require  => [
-                            File["${cache_dir}"],
+                            File[$cache_dir],
                           ]
             }
 
@@ -234,12 +234,12 @@ class sqlserver(
             exec {'sqlserver-install-extract':
               command  => "${cache_dir}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
               creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
-			  onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
-              cwd      => "${cache_dir}",
+              onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
+              cwd      => $cache_dir,
               provider => powershell,
               timeout  => 1800,
               require  => [
-                            File["${cache_dir}"],
+                            File[$cache_dir],
                             Exec['sqlserver-install-download'],
                           ]
             }
@@ -258,11 +258,11 @@ class sqlserver(
               exec {'sqlserver-install-extract':
                 command  => "${mount} ; ${source}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
                 creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
-                cwd      => "${cache_dir}",
+                cwd      => $cache_dir,
                 provider => powershell,
                 timeout  => 1800,
                 require  => [
-                              File["${cache_dir}"],
+                              File[$cache_dir],
                             ]
               }
             }
@@ -271,21 +271,21 @@ class sqlserver(
               exec {'sqlserver-install-extract':
                 command  => "${source}/${sql_install} /X:\"${cache_dir}\\SQLSERVER-INSTALL\" /Q ; Start-Sleep -Seconds 5",
                 creates  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE",
-                cwd      => "${cache_dir}",
+                cwd      => $cache_dir,
                 provider => powershell,
-				onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
+                onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object  DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
                 timeout  => 1800,
                 require  => [
-                              File["${cache_dir}"],
+                              File[$cache_dir],
                             ]
               }
             }
           }
 
           exec {'sqlserver-install-extract-sleep':
-            command  => "Start-Sleep -Seconds 180",
+            command  => 'Start-Sleep -Seconds 180',
             provider => powershell,
-			onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
+            onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
             timeout  => 1800,
             require  => [
                           Exec['sqlserver-install-extract'],
@@ -297,11 +297,11 @@ class sqlserver(
             command  => "${cache_dir}/SQLSERVER-INSTALL/SETUP.EXE /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${options} /TCPENABLED=1 /SKIPRULES=RebootRequiredCheck",
             returns  => [0, 1],
             onlyif   => "if (Get-ItemProperty HKLM:/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/*,HKLM:/SOFTWARE/Wow6432Node/Microsoft/Windows/CurrentVersion/Uninstall/* | Where-Object DisplayName -eq 'Microsoft SQL Server 2014 (64-bit)') { exit 1; }",
-            cwd      => "${cache_dir}",
+            cwd      => $cache_dir,
             provider => powershell,
             timeout  => 900,
             require  => [
-                          File["${cache_dir}"],
+                          File[$cache_dir],
                           Exec['sqlserver-install-extract'],
                           Exec['sqlserver-install-extract-sleep'],
                           Exec['sqlserver-Net-Framework-Core'],
@@ -310,8 +310,8 @@ class sqlserver(
           if($manage_firewall == true)
           {
             firewall::rule { 'SQLServer':
-              rule        => 'SQLServer-Instance-In-TCP',
               ensure      => enabled,
+              rule        => 'SQLServer-Instance-In-TCP',
               create      => true,
               display     => 'SQLServer Instance (TCP-In)',
               description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
@@ -345,13 +345,13 @@ class sqlserver(
           {
             /^smb:\/\//:
             {
-              fail("Not implemented yet! (smb://)")
+              fail('Not implemented yet! (smb://)')
             }
             /^\\\\.*/:
             {
               $credentials  = pscredential(hiera('sqlserver::source::user'), hiera('sqlserver::source::password'))
               $creds_option = "-Credential ${credentials}"
-              $mount_share  = "New-PSDrive -Name Z \"${source}\" -PSProvider FileSystem ${mount_creds_options}"
+              $mount_share  = "New-PSDrive -Name Z \"${source}\" -PSProvider FileSystem ${creds_option}"
               $mount_iso    = "Mount-DiskImage -ImagePath \"${source}\""
               $install      = "${mount_share} ; ${mount_iso} ; Z:\\Setup.exe"
             }
@@ -360,15 +360,15 @@ class sqlserver(
 
           exec {'sqlserver-install':
             command  => "${install} /Q /IACCEPTSQLSERVERLICENSETERMS /ACTION=install ${features_option} ${instance_name_option} ${security_option} ${administrators_option} ${dir_option} ${collation_option} /TCPENABLED=1 ${license_option}",
-            creates  => "C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe",
+            creates  => 'C:/Program Files/Microsoft SQL Server/MSSQL11.MSSQLSERVER/MSSQL/binn/sqlservr.exe',
             timeout  => 900,
             provider => powershell
           }
           if($manage_firewall == true)
           {
             firewall::rule { 'SQLServer':
-              rule        => 'SQLServer-Instance-In-TCP',
               ensure      => enabled,
+              rule        => 'SQLServer-Instance-In-TCP',
               create      => true,
               display     => 'SQLServer Instance (TCP-In)',
               description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
