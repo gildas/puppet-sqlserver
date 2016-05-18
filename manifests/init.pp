@@ -55,6 +55,7 @@ class sqlserver(
   $source           = undef,
   $source_user      = undef,
   $source_password  = undef,
+  $manage_firewall  = true,
 )
 {
   # We do not want to copy Unix modes to Windows, it tends to render files unaccessible
@@ -162,7 +163,7 @@ class sqlserver(
             $feature_IS      = member(downcase($features), 'integration services') ? { true => ',IS'   , default => '' }
             $feature_RS      = member(downcase($features), 'reporting services')   ? { true => ',RS',    default => '' }
             $feature_tools   = member(downcase($features), 'tools')                ? { true => ',Tools', default => '' }
-            $features_option = "/FEATURES=SQL${feature_AS}${feature_IS}${feature_RS}$(feature_tools}"
+            $features_option = "/FEATURES=SQL${feature_AS}${feature_IS}${feature_RS}${feature_tools}"
             $product_path    = 'ExpressAdv%2064BIT'
             $sql_install     = "SQLEXPRADV_x64_${install_language}.exe"
           }
@@ -306,18 +307,20 @@ class sqlserver(
                           Exec['sqlserver-Net-Framework-Core'],
                         ]
           }
-
-          firewall::rule { 'SQLServer':
-            rule        => 'SQLServer-Instance-In-TCP',
-            ensure      => enabled,
-            create      => true,
-            display     => 'SQLServer Instance (TCP-In)',
-            description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
-            action      => 'Allow',
-            direction   => 'Inbound',
-            protocol    => 'TCP',
-            local_port  => '1433',
-            require     => Exec['sqlserver-install'],
+          if($manage_firewall == true)
+          {
+            firewall::rule { 'SQLServer':
+              rule        => 'SQLServer-Instance-In-TCP',
+              ensure      => enabled,
+              create      => true,
+              display     => 'SQLServer Instance (TCP-In)',
+              description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
+              action      => 'Allow',
+              direction   => 'Inbound',
+              protocol    => 'TCP',
+              local_port  => '1433',
+              require     => Exec['sqlserver-install'],
+            }
           }
         }
         'standard':
@@ -361,18 +364,20 @@ class sqlserver(
             timeout  => 900,
             provider => powershell
           }
-
-          firewall::rule { 'SQLServer':
-            rule        => 'SQLServer-Instance-In-TCP',
-            ensure      => enabled,
-            create      => true,
-            display     => 'SQLServer Instance (TCP-In)',
-            description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
-            action      => 'Allow',
-            direction   => 'Inbound',
-            protocol    => 'TCP',
-            local_port  => '1433',
-            require     => Exec['sqlserver-install'],
+          if($manage_firewall == true)
+          {
+            firewall::rule { 'SQLServer':
+              rule        => 'SQLServer-Instance-In-TCP',
+              ensure      => enabled,
+              create      => true,
+              display     => 'SQLServer Instance (TCP-In)',
+              description => 'Inbound Rule to access the SQLServer instance [TCP 1433]',
+              action      => 'Allow',
+              direction   => 'Inbound',
+              protocol    => 'TCP',
+              local_port  => '1433',
+              require     => Exec['sqlserver-install'],
+            }
           }
         }
         'enterprise':
