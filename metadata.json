@@ -15,8 +15,8 @@
     }
   ],
   "dependencies": [
-    {"name": "puppetlabs/stdlib",     "version_requirement": ">=2.7.0 <5.0.0"},
-    {"name": "puppetlabs/powershell", "version_requirement": ">=3.0.0 <5.0.0"},
+    {"name": "puppetlabs/stdlib",     "version_requirement": ">=2.7.0 <6.0.0"},
+    {"name": "puppetlabs/powershell", "version_requirement": ">=2.0.0 <6.0.0"},
     {"name": "gildas/firewall",       "version_requirement": ">=0.1.0 <1.0.0"}
   ]
 }
