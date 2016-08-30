@@ -1,3 +1,8 @@
+##2016-08-30 - Version 0.2.7
+###Summary
+
+ This release contains puppet module dependency fixes
+
 ##2016-05-18 - Version 0.2.6
 ###Summary
 
