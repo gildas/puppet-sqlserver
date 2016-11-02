@@ -68,13 +68,13 @@ class sqlserver(
     err('This module works on Windows only!')
     fail('Unsupported OS')
   }
-  validate_re($language, ['^(?i)(de|en|es|fr|ja|ko|pt|ru|zh-CHS|zh-CHT)'])
+  validate_legacy("Optional[String]", "validate_re", $language, ['^(?i)(de|en|es|fr|ja|ko|pt|ru|zh-CHS|zh-CHT)'])
   validate_array($features)
   if (empty($features)) { fail('Unable to continue processing SQL Server since no features were selected') }
-  validate_re($edition, ['^(?i)(express|standard|enterprise)$'])
+  validate_legacy("Optional[String]", "validate_re", $edition, ['^(?i)(express|standard|enterprise)$'])
   unless ($edition =~ /^(?i:express)$/)
   {
-    validate_re($license_type, ['^(?i)(evaluation|MSDN|Volume|Retail)$'])
+    validate_legacy("Optional[String]", "validate_re", $license_type, ['^(?i)(evaluation|MSDN|Volume|Retail)$'])
     unless ($license_type =~ /^(?i:evaluation)$/)
     {
       validate_string($license)
